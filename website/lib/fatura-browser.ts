@@ -174,7 +174,7 @@ export class BrowserFaturaClient {
         return this.runWithProxy(() => this.client.sendSignSMSCode(token, phone));
     }
 
-    async verifySignSMSCode(token: string, smsCode: string, operationId: string): Promise<string | undefined> {
+    async verifySignSMSCode(token: string, smsCode: string, operationId: string): Promise<boolean> {
         return this.runWithProxy(() => this.client.verifySignSMSCode(token, smsCode, operationId));
     }
 

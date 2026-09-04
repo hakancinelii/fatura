@@ -66,22 +66,27 @@ export function InvoiceList({
                     <thead>
                         <tr style={{ textAlign: "left", color: "var(--muted)" }}>
                             <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>Tarih</th>
-                            <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>UUID</th>
-                            <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>Alıcı</th>
+                            <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>Belge No / UUID</th>
+                            <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>Firma / Kişi</th>
                             <th style={{ padding: "0.6rem", borderBottom: "1px solid var(--line)" }}>Durum</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {invoices.map((invoice) => {
-                            const recipient =
+                        {invoices.map((invoice, idx) => {
+                            const date = String(invoice.faturaTarihi || invoice.belgeTarihi || "-");
+                            const docOrUuid = String(invoice.belgeNumarasi || invoice.ettn || "-");
+                            const party = String(
+                                invoice.saticiUnvan ||
                                 invoice.aliciUnvan ||
                                 [invoice.aliciAdi, invoice.aliciSoyadi].filter(Boolean).join(" ") ||
-                                "-";
+                                "-"
+                            );
+                            const status = String(invoice.onayDurumu || "-");
 
                             return (
-                                <tr key={invoice.ettn + invoice.faturaTarihi}>
+                                <tr key={(invoice.ettn || invoice.belgeNumarasi || idx) + date}>
                                     <td style={{ padding: "0.6rem", borderBottom: "1px solid rgba(42,52,65,0.4)" }}>
-                                        {invoice.faturaTarihi}
+                                        {date}
                                     </td>
                                     <td
                                         style={{
@@ -91,13 +96,13 @@ export function InvoiceList({
                                             fontSize: "0.8rem",
                                         }}
                                     >
-                                        {invoice.ettn}
+                                        {docOrUuid}
                                     </td>
                                     <td style={{ padding: "0.6rem", borderBottom: "1px solid rgba(42,52,65,0.4)" }}>
-                                        {recipient}
+                                        {party}
                                     </td>
                                     <td style={{ padding: "0.6rem", borderBottom: "1px solid rgba(42,52,65,0.4)" }}>
-                                        {invoice.onayDurumu ?? "-"}
+                                        {status}
                                     </td>
                                 </tr>
                             );

@@ -40,6 +40,7 @@ export async function POST(request: Request): Promise<Response> {
         });
     }
 
+    console.log("[GIB-PROXY-REQ]", targetURL.toString(), payload.body);
     const upstream = await fetch(targetURL.toString(), {
         method,
         headers,
@@ -60,6 +61,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const text = await upstream.text();
+    console.log("[GIB-PROXY-RES]", text);
 
     return new Response(text, {
         status: upstream.status,

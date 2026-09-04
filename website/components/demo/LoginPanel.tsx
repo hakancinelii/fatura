@@ -1,4 +1,4 @@
-import type { EnvironmentKey } from "fatura";
+import type { EnvironmentKey, UserData } from "fatura";
 
 interface LoginPanelProps {
     env: EnvironmentKey;
@@ -6,6 +6,7 @@ interface LoginPanelProps {
     password: string;
     token: string | null;
     loading: boolean;
+    userData: UserData | null;
     onEnvChange: (env: EnvironmentKey) => void;
     onUserNameChange: (value: string) => void;
     onPasswordChange: (value: string) => void;
@@ -19,6 +20,7 @@ export function LoginPanel({
     password,
     token,
     loading,
+    userData,
     onEnvChange,
     onUserNameChange,
     onPasswordChange,
@@ -87,13 +89,64 @@ export function LoginPanel({
                     border: "1px solid var(--line)",
                     borderRadius: "12px",
                     padding: "0.65rem 0.8rem",
-                    background: "rgba(16,20,18,0.85)",
+                    background: token ? "rgba(16,60,30,0.6)" : "rgba(16,20,18,0.85)",
                 }}
             >
-                <p className="text-muted">Token Durumu</p>
-                <p style={{ marginTop: "0.3rem", fontFamily: "var(--font-mono)", fontSize: "0.88rem" }}>
-                    {token ? token.slice(0, 14) + "..." : "Henüz token alınmadı"}
-                </p>
+                {token ? (
+                    <div style={{ display: "grid", gap: "0.4rem" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <span style={{ fontSize: "1.2rem" }}>✅</span>
+                            <span style={{ fontWeight: 700, color: "#4ade80", fontSize: "1rem" }}>
+                                Bağlı
+                            </span>
+                            <span
+                                style={{
+                                    fontSize: "0.72rem",
+                                    background: env === "PROD" ? "rgba(248,113,113,0.2)" : "rgba(56,189,248,0.2)",
+                                    color: env === "PROD" ? "#f87171" : "#38bdf8",
+                                    padding: "2px 8px",
+                                    borderRadius: 6,
+                                    fontWeight: 600,
+                                }}
+                            >
+                                {env}
+                            </span>
+                        </div>
+                        {userData ? (
+                            <div style={{ display: "grid", gap: "0.25rem", fontSize: "0.88rem" }}>
+                                {userData.title && (
+                                    <div>
+                                        <span className="text-muted">Firma: </span>
+                                        <strong style={{ color: "#e2e8f0" }}>{userData.title}</strong>
+                                    </div>
+                                )}
+                                {(userData.name || userData.surname) && (
+                                    <div>
+                                        <span className="text-muted">Ad Soyad: </span>
+                                        <span style={{ color: "#e2e8f0" }}>{[userData.name, userData.surname].filter(Boolean).join(" ")}</span>
+                                    </div>
+                                )}
+                                {userData.taxIDOrTRID && (
+                                    <div>
+                                        <span className="text-muted">VKN/TCKN: </span>
+                                        <span style={{ fontFamily: "var(--font-mono)", color: "#e2e8f0" }}>{userData.taxIDOrTRID}</span>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p className="text-muted" style={{ fontSize: "0.82rem", margin: 0 }}>
+                                Profil bilgileri yükleniyor…
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <p className="text-muted">Oturum Durumu</p>
+                        <p style={{ marginTop: "0.3rem", fontSize: "0.88rem", color: "#94a3b8" }}>
+                            Henüz giriş yapılmadı
+                        </p>
+                    </>
+                )}
             </div>
         </section>
     );

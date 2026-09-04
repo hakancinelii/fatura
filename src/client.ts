@@ -161,8 +161,8 @@ export class FaturaClient {
             saat: invoiceDetails.time,
             paraBirimi: invoiceDetails.currency ?? "TRY",
             dovzTLkur: invoiceDetails.currencyRate ?? "0",
-            faturaTipi: invoiceDetails.invoiceType ?? "5000/30000",
-            hangiTip: invoiceDetails.hangiTip ?? "Buyuk",
+            faturaTipi: invoiceDetails.invoiceType ?? "SATIS",
+            hangiTip: invoiceDetails.hangiTip ?? "5000/30000",
             siparisNumarasi: invoiceDetails.orderNumber ?? "",
             siparisTarihi: invoiceDetails.orderDate ?? "",
             irsaliyeNumarasi: invoiceDetails.dispatchNumber ?? "",
@@ -173,10 +173,37 @@ export class FaturaClient {
             fisTipi: invoiceDetails.slipType ?? " ",
             zRaporNo: invoiceDetails.zReportNumber ?? "",
             okcSeriNo: invoiceDetails.okcSerialNumber ?? "",
-            vknTckn: invoiceDetails.taxIDOrTRID ?? "11111111111",
-            aliciUnvan: invoiceDetails.title ?? "",
-            aliciAdi: invoiceDetails.name ?? "",
-            aliciSoyadi: invoiceDetails.surname ?? "",
+            vknTckn: (() => {
+                return (invoiceDetails.taxIDOrTRID ?? "11111111111").trim();
+            })(),
+            aliciUnvan: (() => {
+                const vkn = (invoiceDetails.taxIDOrTRID ?? "11111111111").trim();
+                if (vkn.length === 11) {
+                    // Şahıslar için ünvan boş olabilir veya Ad/Soyad yoksa boş bırakılır
+                    return "";
+                }
+                return invoiceDetails.title ?? "";
+            })(),
+            aliciAdi: (() => {
+                if (invoiceDetails.name) return invoiceDetails.name;
+                const vkn = (invoiceDetails.taxIDOrTRID ?? "11111111111").trim();
+                const rawTitle = (invoiceDetails.title ?? "").trim();
+                if (vkn.length === 11 && rawTitle) {
+                    const parts = rawTitle.split(/\s+/);
+                    return parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0];
+                }
+                return "";
+            })(),
+            aliciSoyadi: (() => {
+                if (invoiceDetails.surname) return invoiceDetails.surname;
+                const vkn = (invoiceDetails.taxIDOrTRID ?? "11111111111").trim();
+                const rawTitle = (invoiceDetails.title ?? "").trim();
+                if (vkn.length === 11 && rawTitle) {
+                    const parts = rawTitle.split(/\s+/);
+                    return parts.length > 1 ? parts[parts.length - 1] : ".";
+                }
+                return "";
+            })(),
             bulvarcaddesokak: invoiceDetails.fullAddress ?? "",
             binaAdi: invoiceDetails.buildingName ?? "",
             binaNo: invoiceDetails.buildingNumber ?? "",
@@ -331,7 +358,7 @@ export class FaturaClient {
         const result = await this.runCommand<ApiResponse<InvoiceListItem[]>>(
             token,
             ...COMMANDS.getAllInvoicesIssuedToMeByDateRange,
-            { baslangic: startDate, bitis: endDate, hangiTip: "5000/30000", table: [] },
+            { baslangic: startDate, bitis: endDate },
         );
         return result.data;
     }

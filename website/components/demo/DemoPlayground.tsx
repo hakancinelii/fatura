@@ -10,11 +10,13 @@ import { UserProfile } from "@/components/demo/UserProfile";
 import { InvoiceForm } from "@/components/demo/InvoiceForm";
 import { InvoiceList } from "@/components/demo/InvoiceList";
 import { InvoiceActions } from "@/components/demo/InvoiceActions";
+import { BulkInvoice } from "@/components/demo/BulkInvoice";
 
 const tabs = [
     { id: "login", label: "Giriş" },
     { id: "profile", label: "Profilim" },
     { id: "create", label: "Fatura oluştur" },
+    { id: "bulk", label: "📎 Toplu Fatura" },
     { id: "outgoing", label: "Faturalarım" },
     { id: "incoming", label: "Gelen faturalar" },
     { id: "actions", label: "Fatura işlemleri" },
@@ -86,6 +88,15 @@ export function DemoPlayground() {
         await runAction("Giriş", async () => {
             const nextToken = await client.getToken(userName, password);
             setToken(nextToken);
+
+            // Giriş sonrası otomatik profil bilgilerini çek
+            try {
+                const profile = await client.getUserData(nextToken);
+                setUserData(profile);
+            } catch {
+                // Profil alınamazsa sessizce geç, giriş yine başarılı
+            }
+
             return { token: nextToken.slice(0, 16) + "...", env };
         });
     };
@@ -121,6 +132,73 @@ export function DemoPlayground() {
         });
     };
 
+    const handleBulkCreate = async (
+        invoices: InvoiceDetails[],
+        sign: boolean,
+        strategy: "sequential" | "two-phase" = "sequential",
+    ): Promise<Array<{ uuid: string; error?: string }>> => {
+        const results: Array<{ uuid: string; error?: string }> = [];
+        const activeToken = requireToken();
+
+        if (!sign || strategy === "sequential") {
+            // 🔄 Sırayla: Her fatura oluşturulur ve hemen imzalanır
+            for (const invoiceDetails of invoices) {
+                try {
+                    const draft = await client.createDraftInvoice(activeToken, invoiceDetails);
+                    if (sign) {
+                        const found = await client.findInvoice(activeToken, draft);
+                        if (found !== undefined) {
+                            await client.signDraftInvoice(activeToken, found);
+                        }
+                    }
+                    results.push({ uuid: draft.uuid });
+                    appendActivity(`Fatura oluşturuldu: ${draft.uuid.slice(0, 8)}…`);
+                } catch (cause) {
+                    const message = cause instanceof Error ? cause.message : "Bilinmeyen hata";
+                    results.push({ uuid: "", error: message });
+                    appendActivity(`Fatura hatası: ${message}`);
+                }
+            }
+        } else {
+            // ⚡ 2 Aşamalı: Önce tüm taslaklar oluşturulur, sonra hepsi imzalanır
+            // Aşama 1 — Taslak oluşturma
+            const drafts: Array<{ uuid: string; date: string } | null> = [];
+            for (const invoiceDetails of invoices) {
+                try {
+                    const draft = await client.createDraftInvoice(activeToken, invoiceDetails);
+                    drafts.push(draft);
+                    appendActivity(`Taslak oluşturuldu: ${draft.uuid.slice(0, 8)}…`);
+                } catch (cause) {
+                    const message = cause instanceof Error ? cause.message : "Bilinmeyen hata";
+                    drafts.push(null);
+                    appendActivity(`Taslak hatası: ${message}`);
+                }
+            }
+
+            // Aşama 2 — Toplu imzalama
+            for (const draft of drafts) {
+                if (!draft) {
+                    results.push({ uuid: "", error: "Taslak oluşturulamadı" });
+                    continue;
+                }
+                try {
+                    const found = await client.findInvoice(activeToken, draft);
+                    if (found !== undefined) {
+                        await client.signDraftInvoice(activeToken, found);
+                    }
+                    results.push({ uuid: draft.uuid });
+                    appendActivity(`İmzalandı: ${draft.uuid.slice(0, 8)}…`);
+                } catch (cause) {
+                    const message = cause instanceof Error ? cause.message : "Bilinmeyen hata";
+                    results.push({ uuid: draft.uuid, error: message });
+                    appendActivity(`İmzalama hatası: ${message}`);
+                }
+            }
+        }
+
+        return results;
+    };
+
     const handleCreateInvoice = async (invoiceDetails: InvoiceDetails, sign: boolean) => {
         await runAction("Taslak oluştur", async () => {
             const activeToken = requireToken();
@@ -153,9 +231,20 @@ export function DemoPlayground() {
     const handleLoadIncoming = async () => {
         await runAction("Gelen faturalar", async () => {
             const activeToken = requireToken();
-            const invoices = await client.getAllInvoicesIssuedToMeByDateRange(activeToken, incomingRange);
-            setIncomingInvoices(invoices);
-            return invoices;
+            try {
+                const invoices = await client.getAllInvoicesIssuedToMeByDateRange(activeToken, incomingRange);
+                setIncomingInvoices(invoices);
+                return invoices;
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                if (msg.includes("NullPointerException")) {
+                    setIncomingInvoices([]);
+                    throw new Error(
+                        "GİB portalında bu tarih aralığında adınıza düzenlenmiş e-Arşiv fatura bulunamadı ya da girilen tarih geçersiz.",
+                    );
+                }
+                throw err;
+            }
         });
     };
 
@@ -260,6 +349,7 @@ export function DemoPlayground() {
                     password={password}
                     token={token}
                     loading={loading}
+                    userData={userData}
                     onEnvChange={setEnv}
                     onUserNameChange={setUserName}
                     onPasswordChange={setPassword}
@@ -281,6 +371,14 @@ export function DemoPlayground() {
 
             {activeTab === "create" ? (
                 <InvoiceForm loading={loading} disabled={token === null} onCreate={handleCreateInvoice} />
+            ) : null}
+
+            {activeTab === "bulk" ? (
+                <BulkInvoice
+                    disabled={token === null}
+                    loading={loading}
+                    onBulkCreate={handleBulkCreate}
+                />
             ) : null}
 
             {activeTab === "outgoing" ? (
