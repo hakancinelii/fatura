@@ -298,19 +298,19 @@ export function BulkInvoice({ disabled, loading, onBulkCreate }: BulkInvoiceProp
                     onDrop={onDrop}
                     onClick={() => fileInputRef.current?.click()}
                     style={{
-                        border: `2px dashed ${dragOver ? "#38bdf8" : "rgba(148,163,184,0.35)"}`,
+                        border: `2px dashed ${dragOver ? "var(--accent)" : "var(--line)"}`,
                         borderRadius: 16,
                         padding: "3rem 2rem",
                         textAlign: "center",
                         cursor: "pointer",
-                        background: dragOver ? "rgba(56,189,248,0.06)" : "rgba(15,23,42,0.4)",
+                        background: dragOver ? "rgba(56,189,248,0.08)" : "var(--bg-soft)",
                         transition: "all 0.2s",
                         display: "grid",
                         gap: "0.6rem",
                     }}
                 >
                     <div style={{ fontSize: "2.5rem" }}>📂</div>
-                    <div style={{ fontWeight: 600, fontSize: "1rem" }}>Excel veya CSV dosyasını buraya sürükleyin</div>
+                    <div style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-heading)" }}>Excel veya CSV dosyasını buraya sürükleyin</div>
                     <div className="text-muted" style={{ fontSize: "0.85rem" }}>
                         ya da tıklayın &mdash; <strong>.xlsx</strong> ve <strong>.csv</strong> desteklenmektedir
                     </div>
@@ -329,7 +329,7 @@ export function BulkInvoice({ disabled, loading, onBulkCreate }: BulkInvoiceProp
 
             {/* Parse error */}
             {parseError && (
-                <div style={{ color: "#f87171", background: "rgba(248,113,113,0.08)", borderRadius: 10, padding: "0.7rem 1rem", fontSize: "0.88rem" }}>
+                <div style={{ color: "var(--danger)", background: "var(--danger-bg)", border: "1px solid var(--danger-border)", borderRadius: 10, padding: "0.7rem 1rem", fontSize: "0.88rem" }}>
                     ⚠️ {parseError}
                 </div>
             )}

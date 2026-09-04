@@ -14,7 +14,21 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="tr">
+        <html lang="tr" suppressHydrationWarning>
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `(function() {
+                            try {
+                                var saved = localStorage.getItem('fatura_theme');
+                                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                                var theme = saved || (prefersDark ? 'dark' : 'dark');
+                                document.documentElement.setAttribute('data-theme', theme);
+                            } catch(e) {}
+                        })()`,
+                    }}
+                />
+            </head>
             <body>
                 <div className="bg-grid" aria-hidden />
                 <div className="bg-aurora" aria-hidden />

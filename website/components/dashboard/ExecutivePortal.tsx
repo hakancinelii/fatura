@@ -361,11 +361,11 @@ export function ExecutivePortal() {
             {/* Üst Yönetici Bilgi Kartı (Executive Header & Active Taxpayer Bar) */}
             <section
                 style={{
-                    background: "linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.9) 100%)",
-                    border: "1px solid rgba(56, 189, 248, 0.25)",
+                    background: "var(--card-bg)",
+                    border: "1px solid var(--card-border)",
                     borderRadius: "18px",
                     padding: "1.4rem 1.6rem",
-                    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.45)",
+                    boxShadow: "var(--card-shadow)",
                     display: "grid",
                     gap: "1rem",
                 }}
@@ -374,7 +374,7 @@ export function ExecutivePortal() {
                     <div>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.2rem" }}>
                             <span style={{ fontSize: "1.3rem" }}>🏛️</span>
-                            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em", color: "#f8fafc" }}>
+                            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text-heading)" }}>
                                 Çineli SMMM
                             </h1>
                             <span
@@ -384,7 +384,7 @@ export function ExecutivePortal() {
                                     padding: "3px 10px",
                                     borderRadius: "8px",
                                     background: "rgba(56, 189, 248, 0.15)",
-                                    color: "#38bdf8",
+                                    color: "var(--accent-soft)",
                                     border: "1px solid rgba(56, 189, 248, 0.3)",
                                 }}
                             >
@@ -414,7 +414,7 @@ export function ExecutivePortal() {
                                     padding: "0.45rem 0.8rem",
                                     fontSize: "0.85rem",
                                     fontWeight: 600,
-                                    borderColor: token ? "#38bdf8" : undefined,
+                                    borderColor: token ? "var(--accent)" : undefined,
                                 }}
                             >
                                 <option value="">-- Mükellef Seçiniz --</option>
@@ -433,8 +433,8 @@ export function ExecutivePortal() {
                     style={{
                         padding: "0.9rem 1.2rem",
                         borderRadius: "14px",
-                        background: token ? "rgba(16, 60, 30, 0.45)" : "rgba(30, 41, 59, 0.5)",
-                        border: `1px solid ${token ? "rgba(74, 222, 128, 0.3)" : "rgba(148, 163, 184, 0.2)"}`,
+                        background: token ? "var(--status-active-bg)" : "var(--status-idle-bg)",
+                        border: `1px solid ${token ? "var(--status-active-border)" : "var(--status-idle-border)"}`,
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
@@ -450,11 +450,11 @@ export function ExecutivePortal() {
                                     width: 10,
                                     height: 10,
                                     borderRadius: "50%",
-                                    background: token ? "#4ade80" : "#94a3b8",
-                                    boxShadow: token ? "0 0 10px #4ade80" : "none",
+                                    background: token ? "var(--status-active-text)" : "var(--status-idle-text)",
+                                    boxShadow: token ? "0 0 10px var(--status-active-text)" : "none",
                                 }}
                             />
-                            <strong style={{ color: token ? "#4ade80" : "#94a3b8", fontSize: "0.92rem" }}>
+                            <strong style={{ color: token ? "var(--status-active-text)" : "var(--status-idle-text)", fontSize: "0.92rem" }}>
                                 {token ? "GİB Bağlantısı Aktif" : "Oturum Açılmadı"}
                             </strong>
                         </div>
@@ -464,7 +464,7 @@ export function ExecutivePortal() {
                                 style={{
                                     fontSize: "0.72rem",
                                     background: env === "PROD" ? "rgba(248,113,113,0.2)" : "rgba(56,189,248,0.2)",
-                                    color: env === "PROD" ? "#f87171" : "#38bdf8",
+                                    color: env === "PROD" ? "#f87171" : "var(--accent)",
                                     padding: "2px 8px",
                                     borderRadius: 6,
                                     fontWeight: 700,
@@ -476,12 +476,12 @@ export function ExecutivePortal() {
 
                         {userData ? (
                             <div style={{ display: "flex", gap: "0.8rem", alignItems: "center", flexWrap: "wrap", fontSize: "0.88rem" }}>
-                                <span style={{ color: "#f8fafc", fontWeight: 700 }}>
+                                <span style={{ color: "var(--text-heading)", fontWeight: 700 }}>
                                     {userData.title || selectedTaxpayerTitle || [userData.name, userData.surname].filter(Boolean).join(" ")}
                                 </span>
                                 {userData.taxIDOrTRID && (
-                                    <span style={{ fontFamily: "var(--font-mono)", color: "#94a3b8" }}>
-                                        VKN/TCKN: <strong style={{ color: "#38bdf8" }}>{userData.taxIDOrTRID}</strong>
+                                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}>
+                                        VKN/TCKN: <strong style={{ color: "var(--accent)" }}>{userData.taxIDOrTRID}</strong>
                                     </span>
                                 )}
                                 {userData.taxOffice && (
@@ -491,7 +491,7 @@ export function ExecutivePortal() {
                                 )}
                             </div>
                         ) : selectedTaxpayerTitle ? (
-                            <span style={{ color: "#f8fafc", fontWeight: 700, fontSize: "0.88rem" }}>
+                            <span style={{ color: "var(--text-heading)", fontWeight: 700, fontSize: "0.88rem" }}>
                                 {selectedTaxpayerTitle}
                             </span>
                         ) : null}
@@ -503,7 +503,7 @@ export function ExecutivePortal() {
                             onClick={handleLogout}
                             disabled={loading}
                             className="btn-ghost"
-                            style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", color: "#f87171" }}
+                            style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", color: "var(--danger)" }}
                         >
                             Çıkış Yap
                         </button>
@@ -514,9 +514,10 @@ export function ExecutivePortal() {
             {/* Navigasyon Sekmeleri */}
             <section
                 style={{
-                    background: "rgba(15, 23, 42, 0.7)",
+                    background: "var(--card-bg)",
                     borderRadius: "14px",
-                    border: "1px solid rgba(148, 163, 184, 0.15)",
+                    border: "1px solid var(--card-border)",
+                    boxShadow: "var(--card-shadow)",
                     padding: "0.5rem",
                 }}
             >
@@ -551,7 +552,7 @@ export function ExecutivePortal() {
             {error !== null && (
                 <section
                     className="section-block"
-                    style={{ borderColor: "rgba(239,68,68,0.5)", color: "#fecaca", background: "rgba(46,11,11,0.78)" }}
+                    style={{ borderColor: "var(--danger-border)", color: "var(--danger)", background: "var(--danger-bg)" }}
                 >
                     ⚠️ {error}
                 </section>
@@ -650,7 +651,7 @@ export function ExecutivePortal() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1rem" }}>
                 <section className="section-block" style={{ display: "grid", gap: "0.65rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0 }}>📊 Çıktı / Yanıt</h3>
+                        <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--text-heading)" }}>📊 Çıktı / Yanıt</h3>
                         {preview && (
                             <button
                                 type="button"
@@ -665,13 +666,13 @@ export function ExecutivePortal() {
                     <pre
                         style={{
                             margin: 0,
-                            border: "1px solid var(--line)",
+                            border: "1px solid var(--code-border)",
                             borderRadius: "12px",
                             padding: "0.8rem",
                             overflowX: "auto",
                             maxHeight: "240px",
-                            background: "rgba(9, 13, 11, 0.85)",
-                            color: "#bae6fd",
+                            background: "var(--code-bg)",
+                            color: "var(--accent-soft)",
                             fontSize: "0.81rem",
                             fontFamily: "var(--font-mono)",
                         }}
@@ -682,7 +683,7 @@ export function ExecutivePortal() {
 
                 <section className="section-block" style={{ display: "grid", gap: "0.6rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0 }}>📝 İşlem Günlüğü</h3>
+                        <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--text-heading)" }}>📝 İşlem Günlüğü</h3>
                         {activity.length > 0 && (
                             <button
                                 type="button"

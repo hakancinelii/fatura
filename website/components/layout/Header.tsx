@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const navItems = [
     { href: "/", label: "Fatura Paneli" },
@@ -18,7 +19,9 @@ export function Header() {
             <div className="site-header__inner">
                 <Link href="/" className="brand-mark" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <span style={{ fontSize: "1.2rem" }}>🏛️</span>
-                    <span style={{ fontWeight: 800, letterSpacing: "-0.01em", color: "#f8fafc" }}>Çineli SMMM</span>
+                    <span style={{ fontWeight: 800, letterSpacing: "-0.01em", color: "var(--text-heading)" }}>
+                        Çineli SMMM
+                    </span>
                 </Link>
 
                 <nav className="site-nav" aria-label="Ana menü">
@@ -37,6 +40,7 @@ export function Header() {
                 </nav>
 
                 <div className="site-header__actions">
+                    <ThemeToggle />
                     <a className="btn-ghost" href="https://github.com/hakancinelii/fatura" target="_blank" rel="noreferrer">
                         GitHub
                     </a>

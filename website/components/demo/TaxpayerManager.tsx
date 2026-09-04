@@ -160,12 +160,12 @@ export function TaxpayerManager({ onSelectTaxpayer, activeUserName, loading }: T
                 }}
                 onClick={() => fileInputRef.current?.click()}
                 style={{
-                    border: `2px dashed ${isDragOver ? "var(--accent)" : "rgba(148, 163, 184, 0.3)"}`,
+                    border: `2px dashed ${isDragOver ? "var(--accent)" : "var(--line)"}`,
                     borderRadius: "14px",
                     padding: "1.5rem",
                     textAlign: "center",
                     cursor: "pointer",
-                    background: isDragOver ? "rgba(56, 189, 248, 0.05)" : "rgba(15, 23, 42, 0.3)",
+                    background: isDragOver ? "rgba(56, 189, 248, 0.08)" : "var(--bg-soft)",
                     transition: "all 0.2s",
                 }}
             >
@@ -180,7 +180,7 @@ export function TaxpayerManager({ onSelectTaxpayer, activeUserName, loading }: T
                     }}
                 />
                 <div style={{ fontSize: "2rem", marginBottom: "0.4rem" }}>📊</div>
-                <div style={{ fontWeight: 600, color: "#e2e8f0" }}>
+                <div style={{ fontWeight: 600, color: "var(--text-heading)" }}>
                     Mükellef Listesi Excel Dosyasını Buraya Sürükleyin veya Seçin
                 </div>
                 <div className="text-muted" style={{ fontSize: "0.82rem", marginTop: "0.3rem" }}>
@@ -193,9 +193,9 @@ export function TaxpayerManager({ onSelectTaxpayer, activeUserName, loading }: T
                     style={{
                         padding: "0.75rem 1rem",
                         borderRadius: "10px",
-                        background: "rgba(248, 113, 113, 0.15)",
-                        border: "1px solid rgba(248, 113, 113, 0.3)",
-                        color: "#f87171",
+                        background: "var(--danger-bg)",
+                        border: "1px solid var(--danger-border)",
+                        color: "var(--danger)",
                         fontSize: "0.88rem",
                     }}
                 >
@@ -237,17 +237,17 @@ export function TaxpayerManager({ onSelectTaxpayer, activeUserName, loading }: T
                                         <tr
                                             key={t.id}
                                             style={{
-                                                borderBottom: "1px solid rgba(148, 163, 184, 0.1)",
+                                                borderBottom: "1px solid var(--table-border)",
                                                 background: isActive ? "rgba(56, 189, 248, 0.08)" : "transparent",
                                             }}
                                         >
-                                            <td style={{ padding: "0.75rem 0.6rem", fontWeight: 600, color: "#f8fafc" }}>
+                                            <td style={{ padding: "0.75rem 0.6rem", fontWeight: 600, color: "var(--text-heading)" }}>
                                                 {t.title}
                                             </td>
-                                            <td style={{ padding: "0.75rem 0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.88rem", color: "#94a3b8" }}>
+                                            <td style={{ padding: "0.75rem 0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.88rem", color: "var(--muted)" }}>
                                                 {t.taxID || "-"}
                                             </td>
-                                            <td style={{ padding: "0.75rem 0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.88rem", color: "#38bdf8" }}>
+                                            <td style={{ padding: "0.75rem 0.6rem", fontFamily: "var(--font-mono)", fontSize: "0.88rem", color: "var(--accent)" }}>
                                                 {t.userName}
                                             </td>
                                             <td style={{ padding: "0.75rem 0.6rem" }}>
@@ -258,7 +258,7 @@ export function TaxpayerManager({ onSelectTaxpayer, activeUserName, loading }: T
                                                         borderRadius: "6px",
                                                         fontWeight: 600,
                                                         background: t.env === "PROD" ? "rgba(248, 113, 113, 0.15)" : "rgba(56, 189, 248, 0.15)",
-                                                        color: t.env === "PROD" ? "#f87171" : "#38bdf8",
+                                                        color: t.env === "PROD" ? "var(--danger)" : "var(--accent)",
                                                     }}
                                                 >
                                                     {t.env}
