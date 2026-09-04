@@ -11,12 +11,14 @@ import { InvoiceForm } from "@/components/demo/InvoiceForm";
 import { InvoiceList } from "@/components/demo/InvoiceList";
 import { InvoiceActions } from "@/components/demo/InvoiceActions";
 import { BulkInvoice } from "@/components/demo/BulkInvoice";
+import { TaxpayerManager, type TaxpayerItem } from "@/components/demo/TaxpayerManager";
 
 const tabs = [
+    { id: "taxpayers", label: "🏢 Mükelleflerim" },
     { id: "login", label: "Giriş" },
     { id: "profile", label: "Profilim" },
-    { id: "create", label: "Fatura oluştur" },
     { id: "bulk", label: "📎 Toplu Fatura" },
+    { id: "create", label: "Fatura oluştur" },
     { id: "outgoing", label: "Faturalarım" },
     { id: "incoming", label: "Gelen faturalar" },
     { id: "actions", label: "Fatura işlemleri" },
@@ -98,6 +100,31 @@ export function DemoPlayground() {
             }
 
             return { token: nextToken.slice(0, 16) + "...", env };
+        });
+    };
+
+    const handleSelectTaxpayer = async (taxpayer: TaxpayerItem) => {
+        setUserName(taxpayer.userName);
+        setPassword(taxpayer.password);
+        setEnv(taxpayer.env);
+        const targetClient = createBrowserFaturaClient(taxpayer.env);
+
+        await runAction(`Giriş (${taxpayer.title})`, async () => {
+            const nextToken = await targetClient.getToken(taxpayer.userName, taxpayer.password);
+            setToken(nextToken);
+
+            try {
+                const profile = await targetClient.getUserData(nextToken);
+                setUserData(profile);
+            } catch {
+                // ignore
+            }
+
+            return {
+                taxpayer: taxpayer.title,
+                token: nextToken.slice(0, 16) + "...",
+                env: taxpayer.env,
+            };
         });
     };
 
@@ -341,6 +368,14 @@ export function DemoPlayground() {
                     })}
                 </div>
             </section>
+
+            {activeTab === "taxpayers" ? (
+                <TaxpayerManager
+                    onSelectTaxpayer={handleSelectTaxpayer}
+                    activeUserName={userName}
+                    loading={loading}
+                />
+            ) : null}
 
             {activeTab === "login" ? (
                 <LoginPanel
