@@ -1,4 +1,5 @@
 import { ExecutivePortal } from "@/components/dashboard/ExecutivePortal";
+import { PortalAuthGate } from "@/components/auth/PortalAuthGate";
 
 export const metadata = {
     title: "Fatura Paneli | Çineli SMMM",
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function DemoPage() {
-    return <ExecutivePortal />;
+    return (
+        <PortalAuthGate>
+            <ExecutivePortal />
+        </PortalAuthGate>
+    );
 }
